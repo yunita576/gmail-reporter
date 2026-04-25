@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>Login Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#000;--card:#0a0a0a;--card2:#111;--bdr:rgba(255,255,255,.05);--bdr2:rgba(255,255,255,.1);--t:#fff;--t2:#888;--t3:#555;--cy:#06b6d4;--cy2:#0891b2;--cy-bg:rgba(6,182,212,.08);--cy-bdr:rgba(6,182,212,.2);--red:#ef4444}
+    html,body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased}
+    body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(6,182,212,.1) 0%,transparent 70%);z-index:0;pointer-events:none}
+    .card{position:relative;z-index:1;width:100%;max-width:380px;padding:32px 24px;background:var(--card);border:1px solid var(--bdr);border-radius:20px}
+    .card h2{text-align:center;font-size:20px;font-weight:800;margin-bottom:6px}
+    .card p.sub{text-align:center;font-size:12px;color:var(--t3);margin-bottom:28px}
+    .card input{width:100%;padding:14px 16px;border-radius:12px;background:var(--card2);border:1px solid var(--bdr);color:var(--t);font-size:13px;font-family:inherit;outline:none;margin-bottom:14px;transition:.2s}
+    .card input::placeholder{color:var(--t3)}
+    .card input:focus{border-color:var(--cy-bdr);box-shadow:0 0 0 3px rgba(6,182,212,.06)}
+    .card button{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--cy),var(--cy2));color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.25s;box-shadow:0 4px 20px rgba(6,182,212,.2)}
+    .card button:hover{transform:translateY(-1px)}
+    .card button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .err{text-align:center;font-size:12px;color:var(--red);margin-top:12px;display:none}
+    .err.show{display:block}
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2><i class="fas fa-lock" style="color:var(--cy);margin-right:6px;font-size:18px"></i>Login Admin</h2>
+  <p class="sub">Masukkan password admin</p>
+  <input type="password" id="pw" placeholder="Password admin">
+  <button onclick="login()" id="go">Masuk</button>
+  <div class="err" id="err">Password salah</div>
+</div>
+<script>
+document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter')login()});
+async function login(){
+  var pw=document.getElementById('pw').value;
+  if(!pw)return;
+  var btn=document.getElementById('go');btn.disabled=true;btn.textContent='Memproses...';
+  document.getElementById('err').classList.remove('show');
+  try{
+    var r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    var d=await r.json();
+    if(d.ok){localStorage.setItem('token',d.token);window.location.href='/admin/dashboard.html'}
+    else{document.getElementById('err').classList.add('show')}
+  }catch(e){document.getElementById('err').textContent='Koneksi gagal';document.getElementById('err').classList.add('show')}
+  finally{btn.disabled=false;btn.textContent='Masuk'}
+}
+</script>
+</body>
+</html>

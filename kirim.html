@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>Kirim Gmail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    :root{--bg:#000;--card:#0a0a0a;--card2:#111;--bdr:rgba(255,255,255,.05);--bdr2:rgba(255,255,255,.1);--t:#fff;--t2:#888;--t3:#555;--cy:#06b6d4;--cy2:#0891b2;--cy-bg:rgba(6,182,212,.08);--cy-bdr:rgba(6,182,212,.2);--red:#ef4444;--green:#22c55e}
+    html,body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;-webkit-font-smoothing:antialiased}
+    .page{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 20px}
+    body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(6,182,212,.1) 0%,transparent 70%);z-index:0;pointer-events:none}
+    nav{display:flex;align-items:center;gap:12px;padding:20px 0;border-bottom:1px solid var(--bdr);position:relative;z-index:1}
+    .back{color:var(--t3);text-decoration:none;font-size:18px;padding:4px}
+    nav span{font-size:15px;font-weight:700}
+    .content{flex:1;position:relative;z-index:1;padding:32px 0;display:flex;flex-direction:column;align-items:center;gap:24px}
+    .icon-box{width:64px;height:64px;border-radius:18px;background:var(--cy-bg);border:1px solid var(--cy-bdr);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--cy)}
+    .title{text-align:center}
+    .title h2{font-size:22px;font-weight:800;margin-bottom:6px}
+    .title p{font-size:13px;color:var(--t3)}
+    .form{width:100%;display:flex;flex-direction:column;gap:14px}
+    .form label{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:-6px}
+    .form input{width:100%;padding:14px 16px;border-radius:12px;background:var(--card2);border:1px solid var(--bdr);color:var(--t);font-size:13px;font-family:inherit;outline:none;transition:.2s}
+    .form input::placeholder{color:var(--t3)}
+    .form input:focus{border-color:var(--cy-bdr);box-shadow:0 0 0 3px rgba(6,182,212,.06)}
+    .btn{width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--cy),var(--cy2));color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:.25s;box-shadow:0 4px 20px rgba(6,182,212,.2)}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(6,182,212,.3)}
+    .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .info{width:100%;padding:14px;border-radius:12px;background:var(--card);border:1px solid var(--bdr);display:flex;gap:10px}
+    .info i{color:var(--cy);font-size:14px;margin-top:2px;flex-shrink:0}
+    .info p{font-size:11px;color:var(--t3);line-height:1.6}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:12px 20px;border-radius:12px;font-size:12px;font-weight:600;z-index:99;transition:.4s;opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;backdrop-filter:blur(12px)}
+    .toast.ok{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.2);color:var(--green)}
+    .toast.err{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .foot{padding:20px 0 28px;text-align:center;font-size:10px;color:var(--t3);border-top:1px solid var(--bdr);position:relative;z-index:1}
+    ::-webkit-scrollbar{width:0;display:none}
+  </style>
+</head>
+<body>
+<div class="page">
+  <nav><a href="/" class="back"><i class="fas fa-arrow-left"></i></a><span>Kirim Gmail</span></nav>
+  <div class="content">
+    <div class="icon-box"><i class="fas fa-envelope"></i></div>
+    <div class="title"><h2>Submit Gmail</h2><p>Pastikan Gmail fresh dan belum pernah dikirim</p></div>
+    <div class="form">
+      <label>Nama Lengkap</label>
+      <input type="text" id="nama" placeholder="Masukkan nama kamu">
+      <label>Alamat Gmail</label>
+      <input type="text" id="email" placeholder="contoh@gmail.com">
+      <label>Password Gmail</label>
+      <input type="text" id="pass" placeholder="aass1122">
+      <button class="btn" id="go" onclick="kirim()"><i class="fas fa-paper-plane" id="ico"></i><span id="txt">Kirim Sekarang</span></button>
+    </div>
+    <div class="info"><i class="fas fa-info-circle"></i><p>Gmail yang sudah pernah dikirim oleh siapapun akan otomatis ditolak. Pastikan Gmail benar-benar fresh.</p></div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div class="foot">&copy; 2025 GmailReporter &middot; @Nurza&trade;</div>
+</div>
+<script>
+function toast(msg,ok){var t=document.getElementById('toast');t.className='toast '+(ok?'ok':'err')+' show';t.innerHTML='<i class="fas fa-'+(ok?'check-circle':'exclamation-circle')+'"></i>'+msg;setTimeout(function(){t.classList.remove('show')},3500)}
+async function kirim(){
+  var n=document.getElementById('nama').value.trim();
+  var e=document.getElementById('email').value.trim();
+  var p=document.getElementById('pass').value.trim();
+  if(!n||!e||!p)return toast('Semua field wajib diisi',false);
+  if(!/\S+@\S+\.\S+/.test(e))return toast('Format email tidak valid',false);
+  var btn=document.getElementById('go'),ico=document.getElementById('ico'),txt=document.getElementById('txt');
+  btn.disabled=true;ico.className='spin';txt.textContent='Mengirim...';
+  try{
+    var r=await fetch('/api/kirim',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nama:n,email:e,password:p})});
+    var d=await r.json();
+    if(d.ok){toast('Berhasil! Gmail sedang ditinjau admin.',true);document.getElementById('nama').value='';document.getElementById('email').value='';document.getElementById('pass').value=''}
+    else toast(d.error||'Gagal mengirim',false);
+  }catch(e){toast('Koneksi gagal',false)}
+  finally{btn.disabled=false;ico.className='fas fa-paper-plane';txt.textContent='Kirim Sekarang'}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>Cek Status</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    :root{--bg:#000;--card:#0a0a0a;--card2:#111;--bdr:rgba(255,255,255,.05);--bdr2:rgba(255,255,255,.1);--t:#fff;--t2:#888;--t3:#555;--cy:#06b6d4;--cy-bg:rgba(6,182,212,.08);--cy-bdr:rgba(6,182,212,.2);--red:#ef4444;--green:#22c55e;--yellow:#eab308}
+    html,body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;-webkit-font-smoothing:antialiased}
+    .page{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 20px}
+    body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(6,182,212,.1) 0%,transparent 70%);z-index:0;pointer-events:none}
+    nav{display:flex;align-items:center;gap:12px;padding:20px 0;border-bottom:1px solid var(--bdr);position:relative;z-index:1}
+    .back{color:var(--t3);text-decoration:none;font-size:18px;padding:4px}
+    nav span{font-size:15px;font-weight:700}
+    .content{flex:1;position:relative;z-index:1;padding:32px 0;display:flex;flex-direction:column;align-items:center;gap:24px}
+    .icon-box{width:64px;height:64px;border-radius:18px;background:var(--cy-bg);border:1px solid var(--cy-bdr);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--cy)}
+    .title{text-align:center}
+    .title h2{font-size:22px;font-weight:800;margin-bottom:6px}
+    .title p{font-size:13px;color:var(--t3)}
+    .search{width:100%;display:flex;gap:8px}
+    .search input{flex:1;padding:14px 16px;border-radius:12px;background:var(--card2);border:1px solid var(--bdr);color:var(--t);font-size:13px;font-family:inherit;outline:none;transition:.2s}
+    .search input::placeholder{color:var(--t3)}
+    .search input:focus{border-color:var(--cy-bdr);box-shadow:0 0 0 3px rgba(6,182,212,.06)}
+    .search button{padding:14px 18px;border-radius:12px;border:none;background:var(--cy);color:#fff;font-size:14px;cursor:pointer;transition:.2s}
+    .search button:hover{opacity:.85}
+    .results{width:100%;display:flex;flex-direction:column;gap:8px}
+    .item{width:100%;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--bdr);animation:up .3s ease}
+    @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .item-email{font-size:13px;font-weight:600;word-break:break-all}
+    .badge{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .badge.pending{background:rgba(234,179,8,.1);color:var(--yellow)}
+    .badge.valid{background:rgba(34,197,94,.1);color:var(--green)}
+    .badge.tolak{background:rgba(239,68,68,.1);color:var(--red)}
+    .item-info{font-size:11px;color:var(--t3);display:flex;gap:12px}
+    .empty{text-align:center;padding:40px 0;color:var(--t3);font-size:13px}
+    .empty i{font-size:32px;display:block;margin-bottom:12px;opacity:.3}
+    .foot{padding:20px 0 28px;text-align:center;font-size:10px;color:var(--t3);border-top:1px solid var(--bdr);position:relative;z-index:1}
+    ::-webkit-scrollbar{width:0;display:none}
+  </style>
+</head>
+<body>
+<div class="page">
+  <nav><a href="/" class="back"><i class="fas fa-arrow-left"></i></a><span>Cek Status</span></nav>
+  <div class="content">
+    <div class="icon-box"><i class="fas fa-search"></i></div>
+    <div class="title"><h2>Cek Laporan</h2><p>Masukkan email untuk melihat status</p></div>
+    <div class="search">
+      <input type="text" id="email" placeholder="Masukkan email...">
+      <button onclick="cek()"><i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="results" id="res"></div>
+  </div>
+  <div class="foot">&copy; 2025 GmailReporter &middot; @Nurza&trade;</div>
+</div>
+<script>
+document.getElementById('email').addEventListener('keydown',function(e){if(e.key==='Enter')cek()});
+async function cek(){
+  var e=document.getElementById('email').value.trim();
+  if(!e)return;
+  var res=document.getElementById('res');
+  res.innerHTML='<div class="empty"><div style="width:20px;height:20px;border:2px solid rgba(255,255,255,.1);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;margin:0 auto"></div><style>@keyframes sp{to{transform:rotate(360deg)}}</style></div>';
+  try{
+    var r=await fetch('/api/cek?email='+encodeURIComponent(e));
+    var d=await r.json();
+    if(!d.data||d.data.length===0){res.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>Tidak ada laporan ditemukan</div>';return}
+    var html='';
+    d.data.forEach(function(item){
+      var cls=item.status==='valid'?'valid':item.status==='tolak'?'tolak':'pending';
+      var label=item.status==='valid'?'Valid':item.status==='tolak'?'Ditolak':'Pending';
+      html+='<div class="item"><div class="item-top"><span class="item-email">'+item.email+'</span><span class="badge '+cls+'">'+label+'</span></div><div class="item-info"><span><i class="far fa-clock" style="margin-right:4px"></i>'+item.waktu+'</span><span>'+item.nama+'</span></div></div>';
+    });
+    res.innerHTML=html;
+  }catch(e){res.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i>Koneksi gagal</div>'}
+}
+</script>
+</body>
+</html>
